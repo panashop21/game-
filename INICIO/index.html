@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARCADE HUB — ENTER THE ZONE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --neon-green:  #00ff88;
+      --neon-pink:   #ff0090;
+      --neon-blue:   #00d4ff;
+      --neon-yellow: #ffe600;
+      --neon-orange: #ff6b00;
+      --bg-dark:     #050510;
+      --bg-card:     #0d0d2b;
+      --text-dim:    #4a5060;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: #fff;
+      font-family: 'Share Tech Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Grid background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Scanline ── */
+    .scanline {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: rgba(0,255,136,0.07);
+      animation: scanline 6s linear infinite;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    @keyframes scanline {
+      from { top: 0; }
+      to   { top: 100vh; }
+    }
+
+    /* ── Horizontal glow lines (decoration) ── */
+    .glow-line {
+      position: fixed;
+      left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .glow-line.top    { top: 0; }
+    .glow-line.bottom { bottom: 0; }
+
+    /* ── Main wrapper ── */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      gap: 3rem;
+    }
+
+    /* ── Header ── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      text-align: center;
+    }
+
+    .logo-badge {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.55rem, 2vw, 0.75rem);
+      letter-spacing: 6px;
+      color: var(--neon-green);
+      border: 1px solid rgba(0,255,136,0.3);
+      padding: 0.4rem 1rem;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+
+    .logo {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(2rem, 8vw, 5rem);
+      color: var(--neon-green);
+      text-shadow:
+        0 0 20px var(--neon-green),
+        0 0 60px rgba(0,255,136,0.3);
+      letter-spacing: 6px;
+      line-height: 1.2;
+      animation: flicker 5s infinite;
+    }
+
+    .logo span {
+      color: var(--neon-blue);
+      text-shadow:
+        0 0 20px var(--neon-blue),
+        0 0 60px rgba(0,212,255,0.3);
+    }
+
+    .tagline {
+      font-size: clamp(0.55rem, 2vw, 0.75rem);
+      color: var(--neon-blue);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    @keyframes flicker {
+      0%,92%,100% { opacity: 1; }
+      93%          { opacity: 0.5; }
+      95%          { opacity: 0.9; }
+      97%          { opacity: 0.6; }
+    }
+
+    /* ── Feature pills row ── */
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+
+    .pill {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      padding: 0.35rem 0.9rem;
+      border: 1px solid;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+
+    .pill-green  { border-color: var(--neon-green);  color: var(--neon-green); }
+    .pill-blue   { border-color: var(--neon-blue);   color: var(--neon-blue); }
+    .pill-pink   { border-color: var(--neon-pink);   color: var(--neon-pink); }
+    .pill-yellow { border-color: var(--neon-yellow); color: var(--neon-yellow); }
+
+    /* ── Game preview cards row ── */
+    .cards-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .mini-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 4px;
+      padding: 1.2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: default;
+      transition: border-color 0.3s, transform 0.2s;
+      flex: 1 1 120px;
+      max-width: 160px;
+    }
+
+    .mini-card:hover {
+      border-color: var(--neon-blue);
+      transform: translateY(-4px);
+    }
+
+    .mini-card .icon {
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+
+    .mini-card .name {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.38rem;
+      letter-spacing: 1.5px;
+      color: #ccc;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    /* ── CTA enter button ── */
+    .cta-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .cta-label {
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      animation: blink 2s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .enter-btn {
+      display: inline-block;
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.55rem, 2vw, 0.85rem);
+      letter-spacing: 4px;
+      padding: 1.1rem 3rem;
+      color: #000;
+      background: var(--neon-green);
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      text-decoration: none;
+      text-transform: uppercase;
+      position: relative;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+      box-shadow: 0 0 24px rgba(0,255,136,0.4);
+    }
+
+    .enter-btn:hover {
+      background: #fff;
+      box-shadow: 0 0 40px rgba(0,255,136,0.7);
+      transform: scale(1.04);
+    }
+
+    .enter-btn:active {
+      transform: scale(0.98);
+    }
+
+    .enter-btn::after {
+      content: ' ▶';
+      font-size: 0.6em;
+    }
+
+    /* ── Stats bar ── */
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0;
+      border: 1px solid rgba(0,212,255,0.12);
+      border-radius: 4px;
+      overflow: hidden;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .stat-item {
+      flex: 1 1 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.9rem 1rem;
+      border-right: 1px solid rgba(0,212,255,0.1);
+      background: var(--bg-card);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-value {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.7rem, 2vw, 1rem);
+      color: var(--neon-yellow);
+    }
+
+    .stat-label {
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 1.2rem;
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+
+    /* ── Responsive adjustments ── */
+    @media (max-width: 480px) {
+      .logo { letter-spacing: 2px; }
+      .enter-btn { padding: 1rem 2rem; }
+      .mini-card { max-width: 90px; padding: 0.9rem 0.6rem; }
+      .mini-card .icon { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scanline"></div>
+  <div class="glow-line top"></div>
+  <div class="glow-line bottom"></div>
+
+  <main class="wrapper">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="logo-badge">// ARCADE ZONE v1.0 //</div>
+      <h1 class="logo">ARCADE<span>HUB</span></h1>
+      <p class="tagline">insert coin — play forever</p>
+    </section>
+
+    <!-- Feature pills -->
+    <div class="pills">
+      <span class="pill pill-green">6 juegos</span>
+      <span class="pill pill-blue">retro pixel</span>
+      <span class="pill pill-pink">high scores</span>
+      <span class="pill pill-yellow">sin registro</span>
+    </div>
+
+    <!-- Game preview mini-cards -->
+    <div class="cards-row">
+      <div class="mini-card">
+        <span class="icon">🐍</span>
+        <span class="name">Snake</span>
+      </div>
+      <div class="mini-card">
+        <span class="icon">🟦</span>
+        <span class="name">Tetris</span>
+      </div>
+      <div class="mini-card">
+        <span class="icon">🧱</span>
+        <span class="name">Breakout</span>
+      </div>
+      <div class="mini-card">
+        <span class="icon">🏓</span>
+        <span class="name">Pong</span>
+      </div>
+      <div class="mini-card">
+        <span class="icon">🃏</span>
+        <span class="name">Memory</span>
+      </div>
+      <div class="mini-card">
+        <span class="icon">👾</span>
+        <span class="name">Invaders</span>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-value">6</span>
+        <span class="stat-label">Juegos</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">100%</span>
+        <span class="stat-label">Gratis</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">∞</span>
+        <span class="stat-label">Partidas</span>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-area">
+      <span class="cta-label">▼ presiona para comenzar ▼</span>
+      <a class="enter-btn" href="../game!/arcade.html">ENTER ARCADE</a>
+    </div>
+
+  </main>
+
+  <footer>
+    &copy; 2025 ARCADEHUB &nbsp;·&nbsp; ALL RIGHTS RESERVED &nbsp;·&nbsp; RETRO GAMING
+  </footer>
+
+</body>
+</html>
